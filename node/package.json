@@ -1,0 +1,11 @@
+{
+  "name": "mangareader",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "pthappy/gabtrompiz",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+  	"start": "nodemon index.js"
+  }
+}
