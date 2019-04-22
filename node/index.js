@@ -1,17 +1,21 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
+const config = require('helpers/config');
 
-//Ok necesitamos importar express y la cuestión pa postgresql por ahora
-//También necesito ver el enunciado porque im stupid
-app.get('/', (req, res) => {
-	res.setHeader('Content-Type','text/html');
-	res.end("<h1>ola</h1>");
-});
+let session = require('express-session');
+let passport = require('passport');
 
-app.get('/login', (req, res) => {
-});
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(session({
+	secret:'keyboard cat',
+	resave: false,
+	saveUninitialized: false
+}));
 
-app.get('/logout', (req, res) => {
-	res.end('XD');
-});
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.listen(8080);
+app.use('/', require('./routes'));
+
+app.listen(3000);
