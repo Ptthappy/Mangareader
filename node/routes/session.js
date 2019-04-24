@@ -3,26 +3,8 @@ const passport = require('passport');
 const auth = require('../middlewares/isAuth');
 let router = express.Router();
 
-router.post('/login', auth.isLogged, (req, res) => {
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            return next(err);
-        }
-        if (!user) {
-            return res.status(401).send({
-                err: info
-            });
-        }
-        req.logIn(user, (err) => {
-            if (err) {
-                return res.status(500).send({
-                    err: 'Could not log in user'
-                });
-            } res.status(200).send({
-                status: 'Login successful!'
-            });
-        });
-    });
+router.post('/login', auth.isLogged, passport.authenticate('local'), (req, res) => {
+
 });
 
 router.get('/logout', auth.isAuth, (req, res) => {

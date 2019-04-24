@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const config = require('./helpers/config');
+const properties = require('./helpers/properties');
 
 let session = require('express-session');
 let passport = require('passport');
@@ -28,6 +28,6 @@ passport.deserializeUser((user, done) => {
 	done(null, user);
 });
 
-app.listen(config.port, () => {
-	console.log('Listening on port ' + config.port);
+app.listen(properties.port, () => {
+	console.log('Listening on port ' + properties.port);
 });
