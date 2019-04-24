@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const config = require('helpers/config');
+const config = require('./helpers/config');
 
 let session = require('express-session');
 let passport = require('passport');
@@ -18,4 +18,16 @@ app.use(passport.session());
 
 app.use('/', require('./routes'));
 
-app.listen(3000);
+passport.use(require('./helpers/localStrategy'));
+
+passport.serializeUser((user, done) => {
+	done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+	done(null, user);
+});
+
+app.listen(config.port, () => {
+	console.log('Listening on port ' + config.port);
+});
