@@ -2,13 +2,18 @@ let user = require('./users');
 let LocalStrategy = require('passport-local').Strategy;
 
 module.exports = new LocalStrategy((username, password, done) => {
-    console.log(username, password, done);
-
-     user.authenticateUser(username, password).then(user => {
-         if (user.error) {
+     user.authenticateUser(username, password).then(data => {
+         if (data.error) {
              return done(null, false);
          }
-         return done(null, user);
+         user.comparePassword(password, data.user_password).then(isMatch => {
+             if(isMatch) {
+                 return done(null, user)
+             }
+             else {
+                 return done(null, false)
+             }
+         })
      }, err => {
          return done(null, false);
      });
