@@ -7,16 +7,19 @@ module.exports = {
     register: 'INSERT INTO users(type_id, user_username, user_name, user_password, user_creation_time, user_email) ' +
         'VALUES(1, $1, $2, $3, NOW(), $4) RETURNING *',
 
-    modifyUserData: 'UPDATE users SET user_username = $1, user_name = $2 WHERE user_id = 1;',
+    modifyUserData: 'UPDATE users SET user_username = $1, user_name = $2 WHERE user_id = $3;',
 
-    modifyUserPassword: 'UPDATE users SET user_password WHERE user_id = $1',
+    modifyUserPassword: 'UPDATE users SET user_password = $1 WHERE user_id = $2',
 
-    modifyUserEmail: 'UPDATE users SET user_email WHERE user_id = $1',
+    modifyUserEmail: 'UPDATE users SET user_email = $1 WHERE user_id = $2',
 
-    getUserById: 'SELECT * FROM users WHERE user_id = $1',
+    getPassword: 'SELECT user_password FROM users WHERE user_id = $1',
 
-    getUserByUsername: 'SELECT * FROM USERS WHERE user_username = $1',
+    getUserById: 'SELECT user_id, user_username, user_name, user_email FROM users WHERE user_id = $1',
 
+    getUserByUsername: 'SELECT user_id, user_username, user_name, user_email FROM users WHERE user_username = $1',
+
+    getUsers: 'SELECT user_id, user_username, user_name, user_email FROM users',
 
 
     addManga: 'INSERT INTO manga (user_id, manga_name, manga_synopsis) VALUES ($1, $2, $3) RETURNING *;',

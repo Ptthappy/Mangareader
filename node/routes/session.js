@@ -13,7 +13,7 @@ router.post('/login', auth.isLogged, passport.authenticate('local'), (req, res) 
 });
 
 router.get('/logout', auth.isAuth, (req, res) => {
-    req.logout()
+    req.logout();
     res.status(200).send("Logged out successfully");
 });
 
@@ -25,8 +25,8 @@ router.post('/register', auth.isLogged, (req, res) => {
         })
     });
     
-    userHelper.register(user).then(data => {
-        req.login(user, err => {})
+    users.register(user).then(data => {
+        req.login(user, err => {});
         delete data.password
         res.status(200).send(data)
     }, err => {
@@ -34,16 +34,88 @@ router.post('/register', auth.isLogged, (req, res) => {
     })
 });
 
-router.put('/modify', (req, res) => {
-    let user = req.body;
-    console.log(req.user);
-    user.userId = Number.parseInt(user.userId);
-    console.log(req.body);
-    users.modify(user).then(data => {
-        res.status(200).send(data)
-    }).catch(err => {
-        res.status(500).send(err)
-    });
+router.put('/modify', auth.isAuth, (req, res) => {
+    let modify;
+    let user = req.user;
+    if((modify = req.query.typeModify) === undefined) {
+        user.name = req.body.name;
+        user.username = req.body.username;
+
+        users.modify(user).then(data => {
+            delete data.password;
+            res.status(200).send(data);
+        }).catch(err => {
+            res.status(500).send(err);
+        });
+    } else {
+        if (modify === 'password') {
+            users.getPassword(req.user.id).then(data => {
+                users.comparePassword(req.body.oldPassword, data.user_password).then(isMatch => {
+                    if(isMatch) {
+                        req.user.password = req.body.newPassword;
+
+                        bcrypt.genSalt(10, (err, salt) => {
+                            bcrypt.hash(req.user.password, salt, (err, hash) => {
+                                req.user.password = hash;
+                            })
+                        });
+
+                        users.changePassword(req.user.password, req.user.id).then(data => {
+                            res.status(200).send('Password Changed Succesfully')
+                        }).catch(err => {
+                            console.log(err);
+                            res.status(500).send('Database Error');
+                        });
+                    }
+                    else
+                        res.status(401).send('Wrong Password')
+                }).catch(err => {
+                    console.log(err);
+                })
+            }).catch(err => {
+                res.status(500).send(err);
+            });
+        } else {
+            if (modify === 'email') {
+                user.email = req.body.email;
+
+                users.changeEmail(user).then(data => {
+                    res.status(200).send(data);
+                }).catch(err => {
+                    res.status(500).send(err);
+                });
+            } else
+                res.status(400).send('Invalid parameters')
+        }
+    }
+});
+
+router.get('/users', (req, res) => {
+    let id = req.query.id;
+    if(id !== undefined) {
+        users.getUserById(id).then(data => {
+            res.status(200).send(data);
+        }).catch(err => {
+            res.status(500).send(err);
+        });
+    } else {
+        let username = req.query.username;
+        if(username !== undefined) {
+            users.getUserById(username).then(data => {
+                res.status(200).send(data);
+            }).catch(err => {
+                res.status(500).send(err);
+            });
+        } else {
+            users.getUsers().then(data => {
+                delete data.password;
+                res.status(200).send(data);
+            }).catch(err => {
+                res.status(500).send(err);
+            });
+        }
+    }
+
 });
 
 module.exports = router;
