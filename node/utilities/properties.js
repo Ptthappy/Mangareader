@@ -21,19 +21,21 @@ module.exports = {
 
     addManga: 'INSERT INTO manga (user_id, manga_name, manga_synopsis) VALUES ($1, $2, $3) RETURNING *;',
 
-    getMangasByGenre: 'SELECT m.* FROM manga m INNER JOIN manga_genre mg ON m.manga_id = mg.manga_id ' +
-        'WHERE mg.genres_id = $1; ORDER BY m.manga_creation_time',
+    searchByGenre: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN users u ON u.user_id = m.user_id WHERE m.manga_id IN ' + 
+    '(SELECT mg.manga_id FROM manga_genre mg WHERE mg.genres_id = $1) ORDER BY m.manga_creation_time',
 
-    getMangasBySearch: 'SELECT * FROM manga WHERE manga_name ILIKE $1;',
+    searchByName: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN users u ON u.user_id = m.user_id WHERE m.manga_name ILIKE $1;',
+
+    searchByAuthor: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN users u ON u.user_id = m.user_id WHERE u.user_name ILIKE $1 OR u.user_username ILIKE $1;',
 
     getMangasDashboard: 'SELECT * FROM manga ORDER BY manga_creation_time LIMIT 10;',
 
     getManga: 'SELECT *, (SELECT g.genre_des  FROM genres g INNER JOIN manga_genre mg ' + //revisar
         'ON g.genres_id = mg.genres_id WHERE g.genres_id = $1 AS genre_id) FROM manga WHERE manga_id = $2',
 
-    modifyManga: 'UPDATE manga SET manga_name = $1, manga_synopsis = $2 WHERE manga_id = $3 AND user_id = $4;',
+    modifyManga: 'UPDATE manga SET manga_name = $1, manga_synopsis = $2 WHERE manga_id = $3 AND user_id = $4 RETURNING *;',
 
-    deleteManga: 'DELETE FROM manga WHERE manga_id = $1 AND user_id = $2;',
+    deleteManga: 'DELETE FROM manga_genre WHERE manga_id = $1; DELETE FROM manga WHERE manga_id = $1 AND user_id = $2;',
 
     endManga: 'UPDATE manga SET manga_status = TRUE WHERE manga_id = $1',
 
