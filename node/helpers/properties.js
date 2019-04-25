@@ -4,10 +4,10 @@ module.exports = {
 
     login: 'SELECT * FROM users WHERE user_username = $1',
 
-    register: 'INSERT INTO users(type_id, user_username, user_name, user_password, user_creation_time, user_email) ' +
+    register: 'INSERT INTO users (type_id, user_username, user_name, user_password, user_creation_time, user_email) ' +
         'VALUES(1, $1, $2, $3, NOW(), $4)',
 
-    modifyUserData: 'UPDATE users SET user_username = $1, user_name = $2 WHERE user_id = 1;',
+    modifyUserData: 'UPDATE users SET user_username = $1, user_name = $2 WHERE user_id = $3;',
 
     modifyUserPassword: 'UPDATE users SET user_password WHERE user_id = $1',
 
@@ -41,7 +41,11 @@ module.exports = {
     addChapter: 'INSERT INTO chapters (manga_id, chapter_number, chapter_title, chapter_location' +
         'chapter_num_pages) VALUES ($1, $2, $3, $4);',
 
-    getChapters: 'SELECT chapter_number, chapter_title, chapter_location, chapter_num_pages;',
+    getChapters: 'SELECT chapter_number, chapter_title, chapter_location, chapter_num_pages FROM chapters' +
+        'WHERE manga_id = $1;',
+
+    modifyChapter: 'UPDATE chapters SET chapter_number = $1, chapter_title = $2, chapter_location = $3, ' +
+        'chapter_num_pages = $4 WHERE chapter_id = $5;',
 
     deleteChapter: 'DELETE FROM chapters WHERE chapter_id = $1',
 
@@ -49,6 +53,8 @@ module.exports = {
     addGenre: 'INSERT INTO manga_genre (manga_id, genres_id) VALUES ($1, $2);',
 
     deleteGenre: 'DELETE FROM manga_genre WHERE manga_id = $1 AND genres_id = $2;',
+
+    getGenres: 'SELECT * FROM genres',
 
 
     addChapterComment: 'INSERT INTO comments_chapter (user_id, chapter_id, comment_content) VALUES ($1, $2, $3);',

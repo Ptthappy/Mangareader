@@ -15,8 +15,7 @@
     "express-session": "^1.16.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "pg-promise": "^8.6.5",
-    "properties-reader": "^0.0.16"
+    "pg-promise": "^8.6.5"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"
