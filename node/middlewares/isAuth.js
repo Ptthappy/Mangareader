@@ -3,16 +3,16 @@ module.exports.isAuth = (req, res, next) => {
         next();
     } else{
         res.send({
-            status: 400,
-            response: 'Debes de haber iniciado sesion'
+            status: 403,
+            response: 'Not logged in.'
         });
     }
 };
 module.exports.isLogged = (req, res, next) => {
     if (req.isAuthenticated()) {
         res.send({
-            status: 304,
-            response: 'Ya existe una sesion'
+            status: 403,
+            response: 'Already logged in.'
         });
     } else {
         next();

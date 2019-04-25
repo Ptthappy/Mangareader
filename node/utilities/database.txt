@@ -1,0 +1,247 @@
+CREATE SEQUENCE public.genres_genres_id_seq;
+
+CREATE TABLE public.genres (
+                genres_id INTEGER NOT NULL DEFAULT nextval('public.genres_genres_id_seq'),
+                genre_des VARCHAR(20) NOT NULL,
+                CONSTRAINT genres_pk PRIMARY KEY (genres_id)
+);
+
+
+ALTER SEQUENCE public.genres_genres_id_seq OWNED BY public.genres.genres_id;
+
+CREATE SEQUENCE public.type_user_type_id_seq;
+
+CREATE TABLE public.type_user (
+                type_id SMALLINT NOT NULL DEFAULT nextval('public.type_user_type_id_seq'),
+                type_des VARCHAR(20) NOT NULL,
+                CONSTRAINT type_user_pk PRIMARY KEY (type_id)
+);
+
+
+ALTER SEQUENCE public.type_user_type_id_seq OWNED BY public.type_user.type_id;
+
+CREATE SEQUENCE public.users_user_id_seq;
+
+CREATE TABLE public.users (
+                user_id INTEGER NOT NULL DEFAULT nextval('public.users_user_id_seq'),
+                type_id SMALLINT NOT NULL,
+                user_password VARCHAR NOT NULL,
+                user_username VARCHAR NOT NULL,
+                user_name VARCHAR NOT NULL,
+                user_creation_time TIMESTAMP DEFAULT CURRENT_DATE NOT NULL,
+                user_email VARCHAR(50) NOT NULL,
+                CONSTRAINT users_pk PRIMARY KEY (user_id)
+);
+
+
+ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
+
+CREATE SEQUENCE public.manga_manga_id_seq;
+
+CREATE TABLE public.manga (
+                manga_id INTEGER NOT NULL DEFAULT nextval('public.manga_manga_id_seq'),
+                user_id INTEGER NOT NULL,
+                manga_name VARCHAR(50) NOT NULL,
+                manga_synopsis VARCHAR(250) NOT NULL,
+                manga_status BOOLEAN DEFAULT false NOT NULL,
+                manga_creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                CONSTRAINT manga_pk PRIMARY KEY (manga_id)
+);
+
+
+ALTER SEQUENCE public.manga_manga_id_seq OWNED BY public.manga.manga_id;
+
+CREATE SEQUENCE public.subscribe_subscribe_id_seq;
+
+CREATE TABLE public.subscribe (
+                subscribe_id INTEGER NOT NULL DEFAULT nextval('public.subscribe_subscribe_id_seq'),
+                manga_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                CONSTRAINT subscribe_pk PRIMARY KEY (subscribe_id)
+);
+
+
+ALTER SEQUENCE public.subscribe_subscribe_id_seq OWNED BY public.subscribe.subscribe_id;
+
+CREATE SEQUENCE public.manga_genre_genres_id_seq;
+
+CREATE TABLE public.manga_genre (
+                manga_id INTEGER NOT NULL,
+                genres_id INTEGER NOT NULL DEFAULT nextval('public.manga_genre_genres_id_seq'),
+                CONSTRAINT manga_genre_pk PRIMARY KEY (manga_id, genres_id)
+);
+
+ALTER SEQUENCE public.subscribe_subscribe_id_seq OWNED BY public.manga_genre.genres_id;
+
+CREATE SEQUENCE public.chapters_chapter_id_seq;
+
+CREATE TABLE public.chapters (
+                chapter_id INTEGER NOT NULL DEFAULT nextval('public.chapters_chapter_id_seq'),
+                manga_id INTEGER NOT NULL,
+                chapter_number INTEGER NOT NULL,
+                chapter_title VARCHAR(50) NOT NULL,
+                chapter_creation_time VARCHAR DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                chapter_location VARCHAR NOT NULL,
+                chapter_num_pages INTEGER NOT NULL,
+                CONSTRAINT chapters_pk PRIMARY KEY (chapter_id)
+);
+
+
+ALTER SEQUENCE public.chapters_chapter_id_seq OWNED BY public.chapters.chapter_id;
+
+CREATE SEQUENCE public.comments_chapter_comment_id_seq;
+
+CREATE TABLE public.comments_chapter (
+                comment_id INTEGER NOT NULL DEFAULT nextval('public.comments_chapter_comment_id_seq'),
+                user_id INTEGER NOT NULL,
+                chapter_id INTEGER NOT NULL,
+                comment_content VARCHAR(280) NOT NULL,
+                comment_creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                CONSTRAINT comments_chapter_pk PRIMARY KEY (comment_id)
+);
+
+
+ALTER SEQUENCE public.comments_chapter_comment_id_seq OWNED BY public.comments_chapter.comment_id;
+
+CREATE SEQUENCE public.likes_chapter_like_id_seq;
+
+CREATE TABLE public.likes_chapter (
+                like_id INTEGER NOT NULL DEFAULT nextval('public.likes_chapter_like_id_seq'),
+                user_id INTEGER NOT NULL,
+                chapter_id INTEGER NOT NULL,
+                CONSTRAINT likes_chapter_pk PRIMARY KEY (like_id)
+);
+
+
+ALTER SEQUENCE public.likes_chapter_like_id_seq OWNED BY public.likes_chapter.like_id;
+
+CREATE SEQUENCE public.comments_manga_comment_id_seq;
+
+CREATE TABLE public.comments_manga (
+                comment_id INTEGER NOT NULL DEFAULT nextval('public.comments_manga_comment_id_seq'),
+                user_id INTEGER NOT NULL,
+                manga_id INTEGER NOT NULL,
+                comment_content VARCHAR(280) NOT NULL,
+                comment_creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                CONSTRAINT comments_manga_pk PRIMARY KEY (comment_id)
+);
+
+
+ALTER SEQUENCE public.comments_manga_comment_id_seq OWNED BY public.comments_manga.comment_id;
+
+CREATE SEQUENCE public.likes_manga_like_id_seq;
+
+CREATE TABLE public.likes_manga (
+                like_id INTEGER NOT NULL DEFAULT nextval('public.likes_manga_like_id_seq'),
+                user_id INTEGER NOT NULL,
+                manga_id INTEGER NOT NULL,
+                CONSTRAINT likes_manga_pk PRIMARY KEY (like_id)
+);
+
+
+ALTER SEQUENCE public.likes_manga_like_id_seq OWNED BY public.likes_manga.like_id;
+
+ALTER TABLE public.manga_genre ADD CONSTRAINT genres_manga_genre_fk
+FOREIGN KEY (genres_id)
+REFERENCES public.genres (genres_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.users ADD CONSTRAINT type_user_users_fk
+FOREIGN KEY (type_id)
+REFERENCES public.type_user (type_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.likes_manga ADD CONSTRAINT users_likes_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.comments_manga ADD CONSTRAINT users_comments_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.manga ADD CONSTRAINT users_manga_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.likes_chapter ADD CONSTRAINT users_likes_chapter_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.comments_chapter ADD CONSTRAINT users_comments_manga_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.subscribe ADD CONSTRAINT users_subscribe_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.chapters ADD CONSTRAINT manga_chapters_fk
+FOREIGN KEY (manga_id)
+REFERENCES public.manga (manga_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.comments_manga ADD CONSTRAINT manga_comments_fk
+FOREIGN KEY (manga_id)
+REFERENCES public.manga (manga_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.likes_manga ADD CONSTRAINT manga_likes_fk
+FOREIGN KEY (manga_id)
+REFERENCES public.manga (manga_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.manga_genre ADD CONSTRAINT manga_manga_genre_fk
+FOREIGN KEY (manga_id)
+REFERENCES public.manga (manga_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.subscribe ADD CONSTRAINT manga_subscribe_fk
+FOREIGN KEY (manga_id)
+REFERENCES public.manga (manga_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.likes_chapter ADD CONSTRAINT chapters_likes_chapter_fk
+FOREIGN KEY (chapter_id)
+REFERENCES public.chapters (chapter_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.comments_chapter ADD CONSTRAINT chapters_comments_manga_fk
+FOREIGN KEY (chapter_id)
+REFERENCES public.chapters (chapter_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;

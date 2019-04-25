@@ -1,9 +1,9 @@
-const db = require('./db');
+const db = require('../utilities/db');
 const bcrypt = require('bcryptjs');
 // const reader = require('properties-reader');
-const properties = require('./properties.js');
+const properties = require('../utilities/properties');
 
-module.exports.authenticateUser = (username, password) => {
+module.exports.getUserByUsername = (username) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.one(properties.login, [username]).then(user => {
@@ -13,7 +13,6 @@ module.exports.authenticateUser = (username, password) => {
                 rej(err);
             });
         }).catch(err => {
-
             rej(err);
         });
     })
@@ -22,8 +21,16 @@ module.exports.authenticateUser = (username, password) => {
 module.exports.register = user => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
-            obj.none(properties.register, [user.username, user.name, user.password, user.email]).then(data => {
-                res(user)
+            obj.one(properties.register, [user.username, user.name, user.password, user.email]).then(user => {
+                const beautifulUser = {
+                    id: user.user_id,
+                    username: user.user_username,
+                    name: user.user_name,
+                    typeId: user.type_id,
+                    creationTime: new Date(user.user_creation_time).getTime(),
+                    email: user.user_email
+                }
+                res(beautifulUser)
                 obj.done()
             }).catch(err => {
                 rej("Database Error")
