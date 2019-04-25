@@ -3,6 +3,13 @@ const auth = require('../middlewares/isAuth');
 const mangaHelper = require('../helpers/manga');
 let router = express.Router();
 
+router.get('/:id', (req, res) => {
+    const id = req.params.id
+    mangaHelper.getManga(id).then(response => {
+        res.status(response.status).send(response.manga)
+    }, err => res.status(err.status).send(err.message) )
+})
+
 router.post('/add', auth.isAuth, (req, res) => {
     const manga = req.body
     manga.userId = req.user.id

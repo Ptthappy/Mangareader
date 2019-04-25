@@ -35,10 +35,10 @@ module.exports = {
 
     getRecentDashboard: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN users u ON u.user_id = m.user_id ORDER BY manga_creation_time DESC LIMIT 10;',
 
-    getSubscribedDashboard: '',
+    getSubscribedDashboard: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN subscribe s ON s.manga_id = m.manga_id INNER JOIN users u ON u.user_id = s.user_id ' + 
+    ' WHERE s.user_id = $1 ORDER BY m.manga_creation_time DESC LIMIT 10;',
 
-    getManga: 'SELECT *, (SELECT g.genre_des  FROM genres g INNER JOIN manga_genre mg ' + //revisar
-        'ON g.genres_id = mg.genres_id WHERE g.genres_id = $1 AS genre_id) FROM manga WHERE manga_id = $2',
+    getManga: 'SELECT m.*, u.user_id, u.user_name, u.user_username FROM manga m INNER JOIN users u ON m.user_id = u.user_id WHERE m.manga_id = $1',
 
     modifyManga: 'UPDATE manga SET manga_name = $1, manga_synopsis = $2 WHERE manga_id = $3 AND user_id = $4 RETURNING *;',
 

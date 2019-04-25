@@ -1,4 +1,5 @@
 const express = require('express');
+const dashboardHelper = require('../helpers/dashboard')
 const router = express.Router();
 
 router.use('/auth', require('./session'));
@@ -6,7 +7,18 @@ router.use('/manga', require('./manga'));
 router.use('/chapter', require('./chapter'))
 router.get('/dashboard', (req, res) => {
     if(req.isAuthenticated()) {
-        res.status(200).send("logged")
+        dashboardHelper.getLoggedDashboard(req.user.id).then(data => {
+            res.status(200).send(data)
+        }, err => {
+            res.status(500).send(err)
+        })
+    }
+    else {
+        dashboardHelper.getRecentDashboard().then(data => {
+            res.status(200).send(data)
+        }, err => {
+            res.status(500).send(err)
+        })
     }
     
 })

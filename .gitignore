@@ -1,4 +1,4 @@
 .idea/
 node/node_modules/
 node/yarn.lock
-/assets
+node/assets

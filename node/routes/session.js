@@ -34,10 +34,10 @@ router.post('/register', auth.isLogged, (req, res) => {
     })
 });
 
-router.put('/modify', auth.isAuth, async (req, res) => {
-    let modify;
+router.put('/modify/:modify', auth.isAuth, async (req, res) => {
+    let modify = req.params.modify
     let user = req.user;
-    if((modify = req.query.typeModify) === undefined) {
+    if(modify === undefined) {
         user.name = req.body.name;
         user.username = req.body.username;
         users.modify(user).then(data => {
@@ -55,9 +55,7 @@ router.put('/modify', auth.isAuth, async (req, res) => {
 
                         bcrypt.genSalt(10, (err, salt) => {
                             bcrypt.hash(req.user.password, salt, (err, hash) => {
-                                req.user.password = hash;
-
-                                users.changePassword(req.user.password, req.user.id).then(data => {
+                                users.changePassword(hash, req.user.id).then(data => {
                                     res.status(200).send('Password Changed Succesfully')
                                 }).catch(err => {
                                     console.log(err);

@@ -1,6 +1,35 @@
 const db = require('../utilities/db');
 const properties = require('../utilities/properties');
 
+module.exports.getManga = (id) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.oneOrNone(properties.getManga, [id]).then(result => {
+                if(result === null) { rej({ status: 404, message: "Manga with id " + id + " not found." }) }
+                else {
+                     const beautifiedManga = {
+                            id: result.manga_id,
+                            name: result.manga_name,
+                            synopsis: result.manga_synopsis,
+                            status: result.manga_status,
+                            creationTime: new Date(result.manga_creation_time).getTime(),
+                            user: {
+                                id: result.user_id,
+                                name: result.user_name,
+                                username: result.user_username
+                            }
+                        }
+                    res({ status: 200, manga: beautifiedManga })
+                }
+            }).catch(err => {
+                rej({ status: 500, message: "Query Error." })
+            })
+        }).catch(err => {
+            rej({ status: 500, message: "Database Error." })
+        })
+    })
+}
+
 module.exports.addManga = (manga) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
