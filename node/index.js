@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const properties = require('./helpers/properties');
+const properties = require('./utilities/properties');
 
 let session = require('express-session');
 let passport = require('passport');
