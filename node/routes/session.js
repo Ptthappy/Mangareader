@@ -26,11 +26,11 @@ router.post('/register', auth.isLogged, (req, res) => {
     });
     
     users.register(user).then(data => {
-        req.login(user, err => {});
+        req.login(data, err => {});
         delete data.password
         res.status(200).send(data)
     }, err => {
-        res.status(500).send(err)
+        res.status(err.status).send(err.message)
     })
 });
 

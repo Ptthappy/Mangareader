@@ -1,8 +1,6 @@
 const express = require('express');
-const passport = require('passport');
 const auth = require('../middlewares/isAuth');
 const mangaHelper = require('../helpers/manga');
-const bcrypt = require('bcryptjs')
 let router = express.Router();
 
 router.post('/add', auth.isAuth, (req, res) => {

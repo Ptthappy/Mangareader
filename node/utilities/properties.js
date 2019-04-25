@@ -6,6 +6,8 @@ module.exports = {
 
     register: 'INSERT INTO users(type_id, user_username, user_name, user_password, user_creation_time, user_email) ' +
         'VALUES(1, $1, $2, $3, NOW(), $4) RETURNING *',
+    
+    checkUsernameAndEmail: 'SELECT * FROM users WHERE user_username = $1 OR user_email = $2',
 
     modifyUserData: 'UPDATE users SET user_username = $1, user_name = $2 WHERE user_id = $3;',
 
@@ -31,7 +33,9 @@ module.exports = {
 
     searchByAuthor: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN users u ON u.user_id = m.user_id WHERE u.user_name ILIKE $1 OR u.user_username ILIKE $1;',
 
-    getMangasDashboard: 'SELECT * FROM manga ORDER BY manga_creation_time LIMIT 10;',
+    getRecentDashboard: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN users u ON u.user_id = m.user_id ORDER BY manga_creation_time DESC LIMIT 10;',
+
+    getSubscribedDashboard: '',
 
     getManga: 'SELECT *, (SELECT g.genre_des  FROM genres g INNER JOIN manga_genre mg ' + //revisar
         'ON g.genres_id = mg.genres_id WHERE g.genres_id = $1 AS genre_id) FROM manga WHERE manga_id = $2',

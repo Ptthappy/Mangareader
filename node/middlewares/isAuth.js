@@ -8,6 +8,7 @@ module.exports.isAuth = (req, res, next) => {
         });
     }
 };
+
 module.exports.isLogged = (req, res, next) => {
     if (req.isAuthenticated()) {
         res.send({

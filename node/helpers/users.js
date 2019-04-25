@@ -36,22 +36,28 @@ module.exports.getUserById = id => {
 module.exports.register = user => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
-            obj.one(properties.register, [user.username, user.name, user.password, user.email]).then(user => {
-                const beautifulUser = {
-                    id: user.user_id,
-                    username: user.user_username,
-                    name: user.user_name,
-                    typeId: user.type_id,
-                    creationTime: new Date(user.user_creation_time).getTime(),
-                    email: user.user_email
-                };
-                res(beautifulUser);
-                obj.done()
-            }).catch(err => {
-                rej(err);
+            obj.oneOrNone(properties.checkUsernameAndEmail, [user.username, user.email]).then(data => {
+                if(data === null) {
+                    obj.one(properties.register, [user.username, user.name, user.password, user.email]).then(user => {
+                        const beautifulUser = {
+                            id: user.user_id,
+                            username: user.user_username,
+                            name: user.user_name,
+                            typeId: user.type_id,
+                            creationTime: new Date(user.user_creation_time).getTime(),
+                            email: user.user_email
+                        };
+                        res(beautifulUser);
+                        obj.done()
+                    }).catch(err => {
+                        rej({ status: 500, message: "Query Error" });
+                    })           
+                } else {
+                    rej({ status: 409, messsage: "Username or Email already in use." })
+                }
             })
         }).catch(err => {
-            rej(err);
+            rej({ status: 500, message: "Database Error" });
         })
     })
 };

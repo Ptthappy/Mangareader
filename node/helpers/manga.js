@@ -1,6 +1,4 @@
 const db = require('../utilities/db');
-const bcrypt = require('bcryptjs');
-// const reader = require('properties-reader');
 const properties = require('../utilities/properties');
 
 module.exports.addManga = (manga) => {
@@ -51,10 +49,10 @@ module.exports.modifyManga = (manga, userId) => {
                 res(count)
                 obj.done()
             }).catch(err => {
-                rej(err)
+                rej("Query Error.")
             })
         }).catch(err => {
-            rej(err)
+            rej("Database Error.")
         })
     })
 }
@@ -84,11 +82,10 @@ module.exports.search = (by, query) => {
                 res(arrayBeautified)
                 obj.done()
             }).catch(err => {
-                console.log(err)
-                rej(err)
+                rej("Query Error.")
             })
         }).catch(err => {
-            rej(err)
+            rej("Database Error.")
         })
     })
 }
