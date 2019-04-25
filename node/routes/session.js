@@ -34,13 +34,12 @@ router.post('/register', auth.isLogged, (req, res) => {
     })
 });
 
-router.put('/modify', auth.isAuth, (req, res) => {
+router.put('/modify', auth.isAuth, async (req, res) => {
     let modify;
     let user = req.user;
     if((modify = req.query.typeModify) === undefined) {
         user.name = req.body.name;
         user.username = req.body.username;
-
         users.modify(user).then(data => {
             delete data.password;
             res.status(200).send(data);
@@ -57,14 +56,14 @@ router.put('/modify', auth.isAuth, (req, res) => {
                         bcrypt.genSalt(10, (err, salt) => {
                             bcrypt.hash(req.user.password, salt, (err, hash) => {
                                 req.user.password = hash;
-                            })
-                        });
 
-                        users.changePassword(req.user.password, req.user.id).then(data => {
-                            res.status(200).send('Password Changed Succesfully')
-                        }).catch(err => {
-                            console.log(err);
-                            res.status(500).send('Database Error');
+                                users.changePassword(req.user.password, req.user.id).then(data => {
+                                    res.status(200).send('Password Changed Succesfully')
+                                }).catch(err => {
+                                    console.log(err);
+                                    res.status(500).send('Database Error');
+                                });
+                            })
                         });
                     }
                     else
@@ -115,7 +114,6 @@ router.get('/users', (req, res) => {
             });
         }
     }
-
 });
 
 module.exports = router;
