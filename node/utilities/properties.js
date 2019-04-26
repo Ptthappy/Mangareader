@@ -47,13 +47,16 @@ module.exports = {
     endManga: 'UPDATE manga SET manga_status = TRUE WHERE manga_id = $1',
 
 
-    addChapter: 'INSERT INTO chapters (manga_id, chapter_number, chapter_title, chapter_location' +
-        'chapter_num_pages) VALUES ($1, $2, $3, $4);',
+    addChapter: 'INSERT INTO chapters (manga_id, chapter_number, chapter_title, chapter_location, ' +
+        'chapter_num_pages, chapter_creation_time) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *;',
 
-    getChapters: 'SELECT chapter_number, chapter_title, chapter_location, chapter_num_pages;',
+    getChapters: 'SELECT * from chapters WHERE manga_id = $1;',
+
+    getChapterById: 'SELECT * from chapters WHERE manga_id = $1 AND chapter_number = $2',
 
     deleteChapter: 'DELETE FROM chapters WHERE chapter_id = $1',
 
+    checkChapter: 'SELECT * FROM chapters WHERE manga_id = $1 AND chapter_number = $2',
 
     addGenre: 'INSERT INTO manga_genre (manga_id, genres_id) VALUES ($1, $2);',
 

@@ -1,6 +1,5 @@
 const db = require('../utilities/db');
 const properties = require('../utilities/properties');
-const router = express.Router();
 
 module.exports.getManga = (id) => {
     return new Promise((res, rej) => {
