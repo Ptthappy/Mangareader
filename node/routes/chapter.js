@@ -1,19 +1,22 @@
 const express = require('express');
 const auth = require('../middlewares/isAuth');
 const multer = require('multer')
-const upload = multer({ dest: 'assets/' })
+const diskStorage = require('../utilities/diskStorage')
+const upload = multer({ storage: diskStorage.storage })
+const checkManga = require('../middlewares/checkManga')
+const chapterHelper = require('../helpers/chapter')
+
 let router = express.Router();
 
-router.use('/likes', require('../helpers/likes'));
-router.use('/comments', require('../helpers/comments'));
-
-router.post('/add', auth.isAuth, upload.array('chapters', 10), (req, res) => {
+router.post('/:id/addChapter', auth.isAuth, checkManga.checkId, upload.array("chapters", 20), (req, res) => {
     const files = req.files
-    if(files.length === 0) {
-        res.status(409).send("Please upload file(s) of chapter.")
+    diskStorage.resetCount()
+    if(!files) {
+        res.status(409).send('Please upload file(s) of chapter.')
     }
-    
-    res.sendStatus(200)
+    chapterHelper.addChapter(req.params.id, req.body).then(data => {
+        //TODO: esto xd
+    })
 })
 
 module.exports = router
