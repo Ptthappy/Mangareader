@@ -70,9 +70,11 @@ module.exports.deleteManga = (mangaId, userId) => {
                 res(count)
                 obj.done()
             }).catch(err => {
+                console.log(err)
                 rej(err)
             })
         }).catch(err => {
+            console.log(err)
             rej(err)
         })
     })

@@ -42,7 +42,7 @@ module.exports = {
 
     modifyManga: 'UPDATE manga SET manga_name = $1, manga_synopsis = $2 WHERE manga_id = $3 AND user_id = $4 RETURNING *;',
 
-    deleteManga: 'DELETE FROM manga_genre WHERE manga_id = $1; DELETE FROM manga WHERE manga_id = $1 AND user_id = $2;',
+    deleteManga: 'DELETE FROM subscribe WHERE manga_id = $1; DELETE FROM manga_genre WHERE manga_id = $1; DELETE FROM manga WHERE manga_id = $1 AND user_id = $2;',
 
     endManga: 'UPDATE manga SET manga_status = TRUE WHERE manga_id = $1',
     
