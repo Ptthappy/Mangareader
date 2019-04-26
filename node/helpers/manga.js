@@ -181,4 +181,19 @@ module.exports.alreadySubscribed = (mangaId, userId) => {
             })
         })
     })
+};
+
+module.exports.endManga = mangaId => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.none(properties.endManga, [mangaId]).then(() => {
+                res();
+                obj.done();
+            }).catch(err => {
+                rej(properties.dbError);
+            });
+        }).catch(err => {
+            rej(properties.dbConError);
+        })
+    });
 }

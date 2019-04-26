@@ -98,4 +98,17 @@ router.get('/:mangaId/unsubscribe', auth.isAuth, mangaFilter.checkId, mangaFilte
     })
 })
 
-module.exports = router
+router.put('/:mangaId/end', auth.isAuth, mangaFilter.checkOwnership, (req, res) => {
+    mangaHelper.endManga(req.params.mangaId).then(data => {
+        res.status(200).send({
+            message: 'Manga terminated'
+        });
+    }).catch(err => {
+        console.log(err);
+        res.status(500).send({
+            message: 'Could not terminate manga'
+        });
+    });
+});
+
+module.exports = router;
