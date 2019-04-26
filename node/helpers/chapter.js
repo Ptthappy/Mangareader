@@ -16,6 +16,7 @@ module.exports.addChapter = (mangaId, chapter) => {
                     pages: result.chapter_num_pages
                 }
                 res(beautifiedChapter)
+                obj.done()
             }).catch(err => { rej("Query Error." ); console.log(err) })
         }).catch(err => { rej("Database Error."); console.log(err) })
     })
@@ -26,6 +27,7 @@ module.exports.checkChapter = (mangaId, chapterNumber) => {
         db.connect().then(obj => {
             obj.result(properties.checkChapter, [mangaId, chapterNumber], r => r.rowCount).then(count => {
                 res(count === 1)
+                obj.done()
             })
         }).catch(err => { res(true) })
     })
@@ -44,6 +46,7 @@ module.exports.getChapter = (mangaId, chapterId) => {
                     pages: result.chapter_num_pages
                 }
                 res(beautifiedChapter)
+                obj.done()
             }).catch(err => rej("Query Error."))
         }).catch(err => rej("Database Error."))
     })
@@ -67,6 +70,17 @@ module.exports.getChaptersOfManga = (mangaId) => {
                     arrayOfChapters.push(beautifiedChapter)
                 })
                 res({ chapters: arrayOfChapters })
+                obj.done()
+            }).catch(err => rej("Query Error."))
+        }).catch(err => rej("Database Error."))
+    })
+}
+
+module.exports.deleteChapter = (mangaId, number) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.none(properties.deleteChapter, [mangaId, number]).then(() => {
+                res("Deleted chapter " + number + " from manga " + mangaId + " successfully.")
             }).catch(err => rej("Query Error."))
         }).catch(err => rej("Database Error."))
     })

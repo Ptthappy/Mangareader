@@ -45,6 +45,10 @@ module.exports = {
     deleteManga: 'DELETE FROM manga_genre WHERE manga_id = $1; DELETE FROM manga WHERE manga_id = $1 AND user_id = $2;',
 
     endManga: 'UPDATE manga SET manga_status = TRUE WHERE manga_id = $1',
+    
+    getMangaStatus: 'SELECT manga_status FROM manga WHERE manga_id = $1',
+
+    getMangaGenres: 'SELECT genres_id FROM manga_genre WHERE manga_id = $1',
 
 
     addChapter: 'INSERT INTO chapters (manga_id, chapter_number, chapter_title, chapter_location, ' +
@@ -54,7 +58,7 @@ module.exports = {
 
     getChapterById: 'SELECT * from chapters WHERE manga_id = $1 AND chapter_number = $2',
 
-    deleteChapter: 'DELETE FROM chapters WHERE chapter_id = $1',
+    deleteChapter: 'DELETE FROM chapters WHERE manga_id = $1 AND chapter_number = $2',
 
     checkChapter: 'SELECT * FROM chapters WHERE manga_id = $1 AND chapter_number = $2',
 

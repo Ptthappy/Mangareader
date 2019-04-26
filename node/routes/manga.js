@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('../middlewares/isAuth');
 const mangaHelper = require('../helpers/manga');
+const mangaFilter = require('../middlewares/mangaFilter')
 let router = express.Router();
 
 router.use('/', require('./chapter'))
@@ -26,7 +27,7 @@ router.post('/add', auth.isAuth, (req, res) => {
     })
 })
 
-router.delete('/delete', auth.isAuth, (req, res) => {
+router.delete('/delete', auth.isAuth, mangaFilter.checkOwnership,  (req, res) => {
     const mangaId = req.query.id
     const userId = req.user.id
     mangaHelper.deleteManga(mangaId, userId).then(rowsAffected => {
@@ -41,7 +42,7 @@ router.delete('/delete', auth.isAuth, (req, res) => {
     })
 })
 
-router.put('/modify', auth.isAuth, (req, res) => {
+router.put('/modify', auth.isAuth, mangaFilter.checkOwnership, (req, res) => {
     const manga = req.body
     const userId = req.user.id
     mangaHelper.modifyManga(manga, userId).then(count => {

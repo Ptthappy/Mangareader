@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) =>  {
         i++
-        cb(null, i + "." + file.originalname.split(".")[file.originalname.split(".").length - 1])
+        cb(null, i + ".png")
     }
   })
 
