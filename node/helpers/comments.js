@@ -4,8 +4,19 @@ const properties = require('../utilities/properties');
 module.exports.getChapterComments = chapterId => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
+            let beautifiedComment = {}
+            const array = []
             obj.many(properties.getChapterComments, [chapterId]).then(data => {
-                res(data);
+                data.forEach(data => {
+                    beautifiedComment = {
+                        username: data.user_username,
+                        id: data.comment_id,
+                        content: data.comment_content,
+                        creationTime: new Date(data.comment_creation_time).getTime()
+                    }
+                    array.push(beautifiedComment)
+                })
+                res(array);
                 obj.done();
             }).catch(err => {
                 res(properties.noResults);
@@ -20,8 +31,19 @@ module.exports.getChapterComments = chapterId => {
 module.exports.getMangaComments = mangaId => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
+            const array = []
+            let beautifiedComment = {}
             obj.many(properties.getMangaComments, [mangaId]).then(data => {
-                res(data);
+                data.forEach(data => {
+                    beautifiedComment = {
+                        username: data.user_username,
+                        id: data.comment_id,
+                        content: data.comment_content,
+                        creationTime: new Date(data.comment_creation_time).getTime()
+                    }
+                    array.push(beautifiedComment)
+                })
+                res(array);
                 obj.done();
             }).catch(err => {
                 console.log(err);

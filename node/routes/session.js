@@ -37,7 +37,7 @@ router.post('/register', auth.isLogged, (req, res) => {
 router.put('/modify/:modify', auth.isAuth, auth.checkEmail, auth.checkUsername, (req, res) => {
     let modify = req.params.modify;
     let user = req.user;
-    if(modify === undefined) {
+    if(modify === 'user') {
         user.name = req.body.name;
         user.username = req.body.username;
         users.modify(user).then(data => {

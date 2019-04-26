@@ -98,7 +98,7 @@ router.get('/:mangaId/unsubscribe', auth.isAuth, mangaFilter.checkId, mangaFilte
     })
 })
 
-router.put('/:mangaId/end', auth.isAuth, mangaFilter.checkOwnership, (req, res) => {
+router.put('/:mangaId/end', auth.isAuth, mangaFilter.checkId, mangaFilter.checkOwnership, (req, res) => {
     mangaHelper.endManga(req.params.mangaId).then(data => {
         res.status(200).send({
             message: 'Manga terminated'
