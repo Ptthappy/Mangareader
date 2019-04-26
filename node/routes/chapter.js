@@ -4,6 +4,9 @@ const multer = require('multer')
 const upload = multer({ dest: 'assets/' })
 let router = express.Router();
 
+router.use('/likes', require('../helpers/likes'));
+router.use('/comments', require('../helpers/comments'));
+
 router.post('/add', auth.isAuth, upload.array('chapters', 10), (req, res) => {
     const files = req.files
     if(files.length === 0) {

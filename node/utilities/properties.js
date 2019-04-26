@@ -62,10 +62,20 @@ module.exports = {
 
     addChapterComment: 'INSERT INTO comments_chapter (user_id, chapter_id, comment_content) VALUES ($1, $2, $3);',
 
+    getChapterComments: 'SELECT u.user_username, c.comment_id, c.comment_content, c.comment_creation_time ' +
+        'FROM comments_chapter c INNER JOIN users u ON u.user_id = c.user_id;',
+
+    modifyChapterComment: 'UPDATE comments_chapter SET comment_content = $1 WHERE comment_id = $2;',
+
     deleteChapterComment: 'DELETE FROM comments_chapter WHERE comment_id = $1;',
 
 
     addMangaComment: 'INSERT INTO comments_manga (user_id, manga_id, comment_content) VALUES ($1, $2, $3);',
+
+    getMangaComments: 'SELECT u.user_username, c.comment_id, c.comment_content, c.comment_creation_time' +
+        'FROM comments_manga c INNER JOIN users u ON u.user_id = c.user_id;',
+
+    modifyMangaComment: 'UPDATE comments_manga SET comment_content = $1 WHERE comment_id = $2;',
 
     deleteMangaComment: 'DELETE FROM comments_manga WHERE comment_id = $1',
 
@@ -76,7 +86,9 @@ module.exports = {
 
     deleteChapterLike: 'DELETE FROM likes_chapter WHERE like_id = $1',
 
-    getChapterLikesList: 'SELECT * FROM likes_chapter WHERE chapter_id = $1',
+    getChapterLikes: 'SELECT * FROM likes_chapter WHERE chapter_id = $1',
+
+    getOwnChapterLike: 'SELECT like_id FROM likes_chapter WHERE user_id = $1',
 
 
     addMangaLike: 'INSERT INTO likes_manga (user_id, manga_id) VALUES ($1, $2);',
@@ -85,11 +97,18 @@ module.exports = {
 
     deleteMangaLike: 'DELETE FROM likes_manga WHERE like_id = $1',
 
-    getMangaLikesList: 'SELECT * FROM likes_manga WHERE manga_id = $1',
+    getMangaLikes: 'SELECT * FROM likes_manga WHERE manga_id = $1',
+
+    getOwnMangaLike: 'SELECT like_id FROM likes_manga WHERE user_id = $1',
 
 
     subscribe: 'INSERT INTO subscribe (user_id, manga_id) VALUES ($1, $2);',
 
 
-    unsubscribe: 'DELETE FROM subscribe WHERE user_id = $1 AND manga_id = $2;'
+    unsubscribe: 'DELETE FROM subscribe WHERE user_id = $1 AND manga_id = $2;',
+
+    //Messages
+    noResults: 'No results were found',
+    dbConError: 'Database Connection Error',
+    dbError: 'Database Error'
 };
