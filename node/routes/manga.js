@@ -73,4 +73,24 @@ router.get('/search/:by', (req, res) => {
     })
 })
 
+router.get('/:mangaId/subscribe', auth.isAuth, mangaFilter.checkId, mangaFilter.checkSubscribe, (req, res) => {
+    const mangaId = req.params.mangaId
+    const userId = req.user.id
+    mangaHelper.subscribe(mangaId, userId).then(() => {
+        res.status(200).send('Subscribed to manga successfully.')
+    }, err => {
+        res.status(500).send(err)
+    })
+})
+
+router.get('/:mangaId/unsubscribe', auth.isAuth, mangaFilter.checkId, mangaFilter.checkUnsubscribe, (req, res) => {
+    const mangaId = req.params.mangaId
+    const userId = req.user.id
+    mangaHelper.unsubscribe(mangaId, userId).then(() => {
+        res.status(200).send("Unsubscribed from manga successfully.")
+    }, err => {
+        res.status(500).send(err)
+    })
+})
+
 module.exports = router

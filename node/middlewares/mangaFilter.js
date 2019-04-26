@@ -70,3 +70,29 @@ module.exports.checkPage = (req, res, next) => {
         }
     })
 }
+
+module.exports.checkSubscribe = (req, res, next) => {
+    const mangaId = req.params.mangaId
+    const userId = req.user.id
+    mangaHelper.alreadySubscribed(mangaId, userId).then(subscribed => {
+        if(subscribed) {
+            res.status(409).send("Already subscribed to the manga.")
+        }
+        else {
+            next()
+        }
+    })
+}
+
+module.exports.checkUnsubscribe = (req, res, next) => {
+    const mangaId = req.params.mangaId
+    const userId = req.user.id
+    mangaHelper.alreadySubscribed(mangaId, userId).then(subscribed => {
+        if(subscribed) {
+            next()
+        }
+        else {
+            res.status(409).send("You are not subscribed to that manga.")
+        }
+    })
+}

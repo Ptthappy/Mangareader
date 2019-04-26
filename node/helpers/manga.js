@@ -144,6 +144,38 @@ module.exports.getMangaStatus = (mangaId) => {
         db.connect().then(obj => {
             obj.one(properties.getMangaStatus, [mangaId]).then(result => {
                 res(result.manga_status)
+                obj.done()
+            })
+        })
+    })
+}
+
+module.exports.subscribe = (mangaId, userId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.none(properties.subscribe, [mangaId, userId]).then(() => {
+                res()
+            }).catch(err => rej("Query Error."))
+        }).catch(err => rej("Database Error."))
+    })
+}
+
+module.exports.unsubscribe = (mangaId, userId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.none(properties.unsubscribe, [mangaId, userId]).then(() => {
+                res()
+            }).catch(err => rej("Query Error."))
+        }).catch(err => rej("Database Error."))
+    })
+}
+
+module.exports.alreadySubscribed = (mangaId, userId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.oneOrNone(properties.checkSubscribe, [mangaId, userId]).then(result => {
+                if(result === null) { res(false) }
+                else { res(true) }
             })
         })
     })

@@ -36,7 +36,7 @@ module.exports = {
     getRecentDashboard: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN users u ON u.user_id = m.user_id ORDER BY manga_creation_time DESC LIMIT 10;',
 
     getSubscribedDashboard: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN subscribe s ON s.manga_id = m.manga_id INNER JOIN users u ON u.user_id = s.user_id ' + 
-    ' WHERE s.user_id = $1 ORDER BY m.manga_creation_time DESC LIMIT 10;',
+    ' WHERE s.user_id = $1 ORDER BY m.manga_creation_time DESC;',
 
     getManga: 'SELECT m.*, u.user_id, u.user_name, u.user_username FROM manga m INNER JOIN users u ON m.user_id = u.user_id WHERE m.manga_id = $1',
 
@@ -109,10 +109,11 @@ module.exports = {
     getOwnMangaLike: 'SELECT like_id FROM likes_manga WHERE user_id = $1',
 
 
-    subscribe: 'INSERT INTO subscribe (user_id, manga_id) VALUES ($1, $2);',
+    subscribe: 'INSERT INTO subscribe (manga_id, user_id) VALUES ($1, $2);',
 
+    unsubscribe: 'DELETE FROM subscribe WHERE manga_id = $1 AND user_id = $2;',
 
-    unsubscribe: 'DELETE FROM subscribe WHERE user_id = $1 AND manga_id = $2;',
+    checkSubscribe: 'SELECT * FROM subscribe WHERE manga_id = $1 AND user_id = $2',
 
     //Messages
     noResults: 'No results were found',
