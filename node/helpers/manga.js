@@ -7,19 +7,26 @@ module.exports.getManga = (id) => {
             obj.oneOrNone(properties.getManga, [id]).then(result => {
                 if(result === null) { rej({ status: 404, message: "Manga with id " + id + " not found." }) }
                 else {
-                     const beautifiedManga = {
+                    let genresArray = []
+                     obj.any(properties.getMangaGenres, [result.manga_id]).then(genres => {
+                        genres.forEach(genre => {
+                            genresArray.push(genre.genres_id)
+                        })
+                        const beautifiedManga = {
                             id: result.manga_id,
                             name: result.manga_name,
                             synopsis: result.manga_synopsis,
                             status: result.manga_status,
                             creationTime: new Date(result.manga_creation_time).getTime(),
+                            genres: genresArray,
                             user: {
                                 id: result.user_id,
                                 name: result.user_name,
                                 username: result.user_username
                             }
                         }
-                    res({ status: 200, manga: beautifiedManga })
+                        res({ status: 200, manga: beautifiedManga })
+                     })
                 }
             }).catch(err => {
                 rej({ status: 500, message: "Query Error." })
@@ -88,33 +95,88 @@ module.exports.modifyManga = (manga, userId) => {
 
 module.exports.search = (by, query) => {
     if(by === 'name' || by === 'author') { query = "%" + query + "%"}
+    const arrayBeautified = []
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.any(properties["searchBy" + by.charAt(0).toUpperCase() + by.slice(1, by.length)], [query]).then(results => {
-                const arrayBeautified = []
                 let mangaBeautified = {}
-                results.forEach(result => {
-                    mangaBeautified = {
-                        id: result.manga_id,
-                        name: result.manga_name,
-                        synopsis: result.manga_synopsis,
-                        status: result.manga_status,
-                        creationTime: new Date(result.manga_creation_time).getTime(),
-                        user: {
-                            id: result.user_id,
-                            username: result.user_username, 
-                            name: result.user_name
+                let genresArray = []
+                results.forEach((result, i) => {
+                    genresArray = []
+                    obj.any(properties.getMangaGenres, [result.manga_id]).then(genres => {
+                        genres.forEach(genre => {
+                            genresArray.push(genre.genres_id)
+                        })
+                        mangaBeautified = {
+                            id: result.manga_id,
+                            name: result.manga_name,
+                            synopsis: result.manga_synopsis,
+                            status: result.manga_status,
+                            creationTime: new Date(result.manga_creation_time).getTime(),
+                            genres: genresArray,
+                            user: {
+                                id: result.user_id,
+                                username: result.user_username, 
+                                name: result.user_name
+                            }
                         }
-                    }
-                    arrayBeautified.push(mangaBeautified)
+                        arrayBeautified.push(mangaBeautified)
+                        if(i === results.length - 1) {
+                            res(arrayBeautified)
+                        }
+                    })
                 })
-                res(arrayBeautified)
-                obj.done()
+                if(results.length === 0) {
+                    res([])
+                }
             }).catch(err => {
                 rej("Query Error.")
             })
-        }).catch(err => {
+        })
+        .catch(err => {
             rej("Database Error.")
+        })
+    })
+}
+
+module.exports.getMangaStatus = (mangaId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.one(properties.getMangaStatus, [mangaId]).then(result => {
+                res(result.manga_status)
+                obj.done()
+            })
+        })
+    })
+}
+
+module.exports.subscribe = (mangaId, userId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.none(properties.subscribe, [mangaId, userId]).then(() => {
+                res()
+            }).catch(err => rej("Query Error."))
+        }).catch(err => rej("Database Error."))
+    })
+}
+
+module.exports.unsubscribe = (mangaId, userId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.none(properties.unsubscribe, [mangaId, userId]).then(() => {
+                res()
+            }).catch(err => rej("Query Error."))
+        }).catch(err => rej("Database Error."))
+    })
+}
+
+module.exports.alreadySubscribed = (mangaId, userId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.oneOrNone(properties.checkSubscribe, [mangaId, userId]).then(result => {
+                if(result === null) { res(false) }
+                else { res(true) }
+            })
         })
     })
 }

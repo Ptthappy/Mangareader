@@ -36,7 +36,7 @@ module.exports = {
     getRecentDashboard: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN users u ON u.user_id = m.user_id ORDER BY manga_creation_time DESC LIMIT 10;',
 
     getSubscribedDashboard: 'SELECT m.*, u.user_id, u.user_username, u.user_name FROM manga m INNER JOIN subscribe s ON s.manga_id = m.manga_id INNER JOIN users u ON u.user_id = s.user_id ' + 
-    ' WHERE s.user_id = $1 ORDER BY m.manga_creation_time DESC LIMIT 10;',
+    ' WHERE s.user_id = $1 ORDER BY m.manga_creation_time DESC;',
 
     getManga: 'SELECT m.*, u.user_id, u.user_name, u.user_username FROM manga m INNER JOIN users u ON m.user_id = u.user_id WHERE m.manga_id = $1',
 
@@ -45,15 +45,22 @@ module.exports = {
     deleteManga: 'DELETE FROM manga_genre WHERE manga_id = $1; DELETE FROM manga WHERE manga_id = $1 AND user_id = $2;',
 
     endManga: 'UPDATE manga SET manga_status = TRUE WHERE manga_id = $1',
+    
+    getMangaStatus: 'SELECT manga_status FROM manga WHERE manga_id = $1',
+
+    getMangaGenres: 'SELECT genres_id FROM manga_genre WHERE manga_id = $1',
 
 
-    addChapter: 'INSERT INTO chapters (manga_id, chapter_number, chapter_title, chapter_location' +
-        'chapter_num_pages) VALUES ($1, $2, $3, $4);',
+    addChapter: 'INSERT INTO chapters (manga_id, chapter_number, chapter_title, chapter_location, ' +
+        'chapter_num_pages, chapter_creation_time) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *;',
 
-    getChapters: 'SELECT chapter_number, chapter_title, chapter_location, chapter_num_pages;',
+    getChapters: 'SELECT * from chapters WHERE manga_id = $1;',
 
-    deleteChapter: 'DELETE FROM chapters WHERE chapter_id = $1',
+    getChapterById: 'SELECT * from chapters WHERE manga_id = $1 AND chapter_number = $2',
 
+    deleteChapter: 'DELETE FROM chapters WHERE manga_id = $1 AND chapter_number = $2',
+
+    checkChapter: 'SELECT * FROM chapters WHERE manga_id = $1 AND chapter_number = $2',
 
     addGenre: 'INSERT INTO manga_genre (manga_id, genres_id) VALUES ($1, $2);',
 
@@ -102,10 +109,11 @@ module.exports = {
     getOwnMangaLike: 'SELECT like_id FROM likes_manga WHERE user_id = $1 AND manga_id = $2;',
 
 
-    subscribe: 'INSERT INTO subscribe (user_id, manga_id) VALUES ($1, $2);',
+    subscribe: 'INSERT INTO subscribe (manga_id, user_id) VALUES ($1, $2);',
 
+    unsubscribe: 'DELETE FROM subscribe WHERE manga_id = $1 AND user_id = $2;',
 
-    unsubscribe: 'DELETE FROM subscribe WHERE user_id = $1 AND manga_id = $2;',
+    checkSubscribe: 'SELECT * FROM subscribe WHERE manga_id = $1 AND user_id = $2',
 
     //Messages
     noResults: 'No results were found',

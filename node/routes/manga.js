@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('../middlewares/isAuth');
 const mangaHelper = require('../helpers/manga');
+const mangaFilter = require('../middlewares/mangaFilter')
 let router = express.Router();
 
 router.use('/', require('./chapter'));
@@ -28,7 +29,7 @@ router.post('/add', auth.isAuth, (req, res) => {
     })
 })
 
-router.delete('/delete', auth.isAuth, (req, res) => {
+router.delete('/delete', auth.isAuth, mangaFilter.checkOwnership,  (req, res) => {
     const mangaId = req.query.id
     const userId = req.user.id
     mangaHelper.deleteManga(mangaId, userId).then(rowsAffected => {
@@ -43,7 +44,7 @@ router.delete('/delete', auth.isAuth, (req, res) => {
     })
 })
 
-router.put('/modify', auth.isAuth, (req, res) => {
+router.put('/modify', auth.isAuth, mangaFilter.checkOwnership, (req, res) => {
     const manga = req.body
     const userId = req.user.id
     mangaHelper.modifyManga(manga, userId).then(count => {
@@ -74,4 +75,24 @@ router.get('/search/:by', (req, res) => {
     })
 })
 
-module.exports = router;
+router.get('/:mangaId/subscribe', auth.isAuth, mangaFilter.checkId, mangaFilter.checkSubscribe, (req, res) => {
+    const mangaId = req.params.mangaId
+    const userId = req.user.id
+    mangaHelper.subscribe(mangaId, userId).then(() => {
+        res.status(200).send('Subscribed to manga successfully.')
+    }, err => {
+        res.status(500).send(err)
+    })
+})
+
+router.get('/:mangaId/unsubscribe', auth.isAuth, mangaFilter.checkId, mangaFilter.checkUnsubscribe, (req, res) => {
+    const mangaId = req.params.mangaId
+    const userId = req.user.id
+    mangaHelper.unsubscribe(mangaId, userId).then(() => {
+        res.status(200).send("Unsubscribed from manga successfully.")
+    }, err => {
+        res.status(500).send(err)
+    })
+})
+
+module.exports = router
