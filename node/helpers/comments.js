@@ -24,6 +24,7 @@ module.exports.getMangaComments = mangaId => {
                 res(data);
                 obj.done();
             }).catch(err => {
+                console.log(err);
                 res(properties.noResults);
             })
         }).catch(err => {
@@ -51,11 +52,12 @@ module.exports.commentManga = (userId, mangaId, commentContent) => {
     });
 };
 
-module.exports.commentChapter = (userId, commentId, commentContent) => {
+module.exports.commentChapter = (userId, chapterId, commentContent) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
-            obj.none(properties.addMangaComment, [userId, commentId, commentContent])
+            obj.none(properties.addChapterComment, [userId, chapterId, commentContent])
                 .then(() => {
+                    console.log('commented');
                     res();
                     obj.done();
                 }).catch(err => {

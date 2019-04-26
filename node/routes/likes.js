@@ -42,7 +42,7 @@ router.post('/:mangaId/likes', auth.isAuth, (req, res) => {
 });
 
 //Do chapter like
-router.post(':mangaId/chapter/:chapterId/likes', auth.isAuth, (req, res) => {
+router.post('/:mangaId/chapter/:chapterId/likes', auth.isAuth, (req, res) => {
     likes.likeChapter(req.user.id, req.params.chapterId).then(data => {
         res.status(200).send({
             message: 'Chapter liked'
@@ -68,7 +68,7 @@ router.delete('/:mangaId/likes', auth.isAuth, (req, res) => {
 });
 
 //Delete chapter like
-router.delete(':mangaId/chapter/:chapterId/likes', auth.isAuth, (req, res) => {
+router.delete('/:mangaId/chapter/:chapterId/likes', auth.isAuth, (req, res) => {
     likes.deleteLike(req.body.likeId, false).then(data => {
         res.status(200).send({
             message: 'Chapter disliked'

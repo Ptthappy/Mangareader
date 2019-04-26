@@ -22,7 +22,7 @@ router.get('/:mangaId/comments', (req, res) => {
 
 //Get chapter comments
 router.get('/:mangaId/chapter/:chapterId/comments', (req, res) => {
-    comments.getMangaComments(req.params.chapterId).then(data => {
+    comments.getChapterComments(req.params.chapterId).then(data => {
         res.status(200).send({
             message: 'Comments returned',
             data: data
@@ -50,7 +50,7 @@ router.post('/:mangaId/comments', auth.isAuth, (req, res) => {
 });
 
 //Comment chapter
-router.post('/:mangaId/chapter/:chapterId/comments', (req, res) => {
+router.post('/:mangaId/chapter/:chapterId/comments', auth.isAuth, (req, res) => {
     comments.commentChapter(req.user.id, req.params.chapterId, req.body.commentContent)
         .then(data => {
         res.status(200).send({
@@ -65,7 +65,7 @@ router.post('/:mangaId/chapter/:chapterId/comments', (req, res) => {
 });
 
 //Modify manga comment
-router.put('/:mangaId/comments', (req, res) => {
+router.put('/:mangaId/comments', auth.isAuth, (req, res) => {
     comments.modifyMangaComment(req.body.commentId, req.body.commentContent).then(data => {
         res.status(200).send({
             message: 'Comment modified',
@@ -79,7 +79,7 @@ router.put('/:mangaId/comments', (req, res) => {
 });
 
 //Modify chapter comment
-router.put('/:mangaId/chapter/:chapterId/comments', (req, res) => {
+router.put('/:mangaId/chapter/:chapterId/comments', auth.isAuth, (req, res) => {
     comments.modifyChapterComment(req.params.chapterId, req.body.commentContent).then(data => {
         res.status(200).send({
             message: 'Comment modified',
@@ -93,7 +93,7 @@ router.put('/:mangaId/chapter/:chapterId/comments', (req, res) => {
 });
 
 //Delete manga comment
-router.delete('/:mangaId/comments', (req, res) => {
+router.delete('/:mangaId/comments', auth.isAuth, (req, res) => {
     comments.deleteMangaComment(req.body.commentId).then(data => {
         res.status(200).send({
             message: 'Comment deleted',
@@ -107,7 +107,7 @@ router.delete('/:mangaId/comments', (req, res) => {
 });
 
 //Delete chapter comment
-router.delete('/:mangaId/chapter/:chapterId/comments', (req, res) => {
+router.delete('/:mangaId/chapter/:chapterId/comments', auth.isAuth, (req, res) => {
     comments.deleteChapterComment(req.body.commentId).then(data => {
         res.status(200).send({
             message: 'Comment deleted',

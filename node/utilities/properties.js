@@ -70,7 +70,7 @@ module.exports = {
     addChapterComment: 'INSERT INTO comments_chapter (user_id, chapter_id, comment_content) VALUES ($1, $2, $3);',
 
     getChapterComments: 'SELECT u.user_username, c.comment_id, c.comment_content, c.comment_creation_time ' +
-        'FROM comments_chapter c INNER JOIN users u ON u.user_id = c.user_id;',
+        'FROM comments_chapter c INNER JOIN users u ON u.user_id = c.user_id WHERE chapter_id = $1;',
 
     modifyChapterComment: 'UPDATE comments_chapter SET comment_content = $1 WHERE comment_id = $2;',
 
@@ -79,8 +79,8 @@ module.exports = {
 
     addMangaComment: 'INSERT INTO comments_manga (user_id, manga_id, comment_content) VALUES ($1, $2, $3);',
 
-    getMangaComments: 'SELECT u.user_username, c.comment_id, c.comment_content, c.comment_creation_time' +
-        'FROM comments_manga c INNER JOIN users u ON u.user_id = c.user_id;',
+    getMangaComments: 'SELECT u.user_username, c.comment_id, c.comment_content, c.comment_creation_time ' +
+        'FROM comments_manga c INNER JOIN users u ON u.user_id = c.user_id WHERE manga_id = $1;',
 
     modifyMangaComment: 'UPDATE comments_manga SET comment_content = $1 WHERE comment_id = $2;',
 
