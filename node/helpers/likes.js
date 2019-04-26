@@ -1,14 +1,14 @@
 const db = require('../utilities/db');
 const properties = require('../utilities/properties');
 
-modules.exports.getMangaLikes = mangaId => {
+module.exports.getMangaLikes = mangaId => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.many(properties.getMangaLikes, [mangaId]).then(data => {
                 res(data);
                 obj.done();
             }).catch(err => {
-                rej(properties.noResults);
+                res(properties.noResults);
             });
         }).catch(err => {
             rej(properties.dbConError);
@@ -17,14 +17,14 @@ modules.exports.getMangaLikes = mangaId => {
     });
 };
 
-modules.exports.getChapterLikes = chapterId => {
+module.exports.getChapterLikes = chapterId => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.many(properties.getChapterLikes, [chapterId]).then(data => {
                 res(data);
                 obj.done();
             }).catch(err => {
-                rej(properties.noResults);
+                res(properties.noResults);
             });
         }).catch(err => {
             rej(properties.dbConError);
@@ -33,11 +33,11 @@ modules.exports.getChapterLikes = chapterId => {
     });
 };
 
-modules.exports.getMangaLike = (userId, manga) => {
+module.exports.getLike = (userId, id, manga) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.oneOrNone( manga ? properties.getOwnMangaLike: properties.getOwnChapterLike,
-                [userId]).then(data => {
+                [userId, id]).then(data => {
                 if (data === null)
                     res(false);
                 else
@@ -55,63 +55,61 @@ modules.exports.getMangaLike = (userId, manga) => {
     });
 };
 
-modules.exports.likeManga = (userId, mangaId) => {
+module.exports.likeManga = (userId, mangaId) => {
     return new Promise((res, rej) => {
-        db.connect().then(obj => {
-            obj.none(properties.addMangaLike, [userId, mangaId]).then(() => {
-                res();
-                obj.done();
-            }).catch(err => {
-                rej(properties.dbError);
-                console.log(err);
-            });
+        this.getLike(userId, mangaId, true).then(data => {
+            if (!data) {
+                db.connect().then(obj => {
+                    obj.none(properties.addMangaLike, [userId, mangaId]).then(() => {
+                        res();
+                        obj.done();
+                    }).catch(err => {
+                        rej(properties.dbError);
+                        console.log(err);
+                    });
+                }).catch(err => {
+                    rej(properties.dbConError);
+                    console.log(err);
+                });
+            } else rej();
         }).catch(err => {
-            rej(properties.dbConError);
             console.log(err);
+            rej(properties.mangaLiked);
         });
     });
 };
 
-modules.exports.likeChapter = (userId, chapterId) => {
+module.exports.likeChapter = (userId, chapterId) => {
     return new Promise((res, rej) => {
-        db.connect().then(obj => {
-            obj.none(properties.addChapterLike, [userId, chapterId]).then(() => {
-                res();
-                obj.done();
+        this.getLike(userId, chapterId, false).then(data => {
+            db.connect().then(obj => {
+                if (!data) {
+                    obj.none(properties.addChapterLike, [userId, chapterId]).then(() => {
+                        res();
+                        obj.done();
+                    }).catch(err => {
+                        rej(properties.dbError);
+                        console.log(err);
+                    });
+                } else rej();
             }).catch(err => {
-                rej(properties.dbError);
+                rej(properties.dbConError);
                 console.log(err);
             });
         }).catch(err => {
-            rej(properties.dbConError);
             console.log(err);
-        });
+            rej(properties.chapterLiked);
+        })
     });
 };
 
-modules.exports.deleteLikeManga = mangaId => {
+module.exports.deleteLike = (likeId, manga) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
-            obj.none(properties.deleteMangaLike, [mangaId]).then(() => {
-                res();
-                obj.done();
-            }).catch(err => {
-                rej(properties.dbError);
-                console.log(err);
-            });
-        }).catch(err => {
-            rej(properties.dbConError);
-            console.log(err);
-        });
-    });
-};
-
-modules.exports.deleteLikeChapter = chapterId => {
-    return new Promise((res, rej) => {
-        db.connect().then(obj => {
-            obj.none(properties.deleteChapterLike, [chapterId]).then(() => {
-                res();
-                obj.done();
+            obj.none(manga ? properties.deleteMangaLike: properties.deleteChapterLike, [likeId])
+                .then(() => {
+                    res();
+                    obj.done();
             }).catch(err => {
                 rej(properties.dbError);
                 console.log(err);

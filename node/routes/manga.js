@@ -3,7 +3,9 @@ const auth = require('../middlewares/isAuth');
 const mangaHelper = require('../helpers/manga');
 let router = express.Router();
 
-router.use('/', require('./chapter'))
+router.use('/', require('./chapter'));
+router.use('/', require('./likes'));
+router.use('/', require('./comments'));
 
 router.get('/:id', (req, res) => {
     const id = req.params.id
@@ -72,4 +74,4 @@ router.get('/search/:by', (req, res) => {
     })
 })
 
-module.exports = router
+module.exports = router;

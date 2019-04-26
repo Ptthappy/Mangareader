@@ -1,14 +1,14 @@
 const db = require('../utilities/db');
 const properties = require('../utilities/properties');
 
-modules.exports.getChapterComments = chapterId => {
+module.exports.getChapterComments = chapterId => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.many(properties.getChapterComments, [chapterId]).then(data => {
                 res(data);
                 obj.done();
             }).catch(err => {
-                rej(properties.noResults);
+                res(properties.noResults);
             })
         }).catch(err => {
             console.log(err);
@@ -17,14 +17,14 @@ modules.exports.getChapterComments = chapterId => {
     });
 };
 
-modules.exports.getMangaComments = mangaId => {
+module.exports.getMangaComments = mangaId => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.many(properties.getMangaComments, [mangaId]).then(data => {
                 res(data);
                 obj.done();
             }).catch(err => {
-                rej(properties.noResults);
+                res(properties.noResults);
             })
         }).catch(err => {
             console.log(err);
@@ -33,7 +33,7 @@ modules.exports.getMangaComments = mangaId => {
     });
 };
 
-modules.exports.commentManga = (userId, mangaId, commentContent) => {
+module.exports.commentManga = (userId, mangaId, commentContent) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.none(properties.addMangaComment, [userId, mangaId, commentContent])
@@ -51,7 +51,7 @@ modules.exports.commentManga = (userId, mangaId, commentContent) => {
     });
 };
 
-modules.exports.commentChapter = (userId, commentId, commentContent) => {
+module.exports.commentChapter = (userId, commentId, commentContent) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.none(properties.addMangaComment, [userId, commentId, commentContent])
@@ -69,10 +69,10 @@ modules.exports.commentChapter = (userId, commentId, commentContent) => {
     });
 };
 
-modules.exports.modifyMangaComment = commentId => {
+module.exports.modifyMangaComment = (commentId, commentContent) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
-            obj.none(properties.modifyMangaComment, [commentId]).then(() => {
+            obj.none(properties.modifyMangaComment, [commentContent, commentId]).then(() => {
                     res();
                     obj.done();
                 }).catch(err => {
@@ -86,10 +86,10 @@ modules.exports.modifyMangaComment = commentId => {
     });
 };
 
-modules.exports.modifyChapterComment = commentId => {
+module.exports.modifyChapterComment = (commentId, commentContent) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
-            obj.none(properties.modifyChapterComment, [commentId]).then(() => {
+            obj.none(properties.modifyChapterComment, [commentContent, commentId]).then(() => {
                 res();
                 obj.done();
             }).catch(err => {
@@ -103,7 +103,7 @@ modules.exports.modifyChapterComment = commentId => {
     });
 };
 
-modules.exports.deleteMangaComment = commentId => {
+module.exports.deleteMangaComment = commentId => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.none(properties.deleteMangaComment, [commentId]).then(() => {
@@ -120,7 +120,7 @@ modules.exports.deleteMangaComment = commentId => {
     });
 };
 
-modules.exports.deleteChapterComment = commentId => {
+module.exports.deleteChapterComment = commentId => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
             obj.none(properties.deleteChapterComment, [commentId]).then(() => {

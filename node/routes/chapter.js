@@ -19,4 +19,4 @@ router.post('/:id/addChapter', auth.isAuth, checkManga.checkId, upload.array("ch
     })
 })
 
-module.exports = router
+module.exports = router;

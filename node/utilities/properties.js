@@ -88,7 +88,7 @@ module.exports = {
 
     getChapterLikes: 'SELECT * FROM likes_chapter WHERE chapter_id = $1',
 
-    getOwnChapterLike: 'SELECT like_id FROM likes_chapter WHERE user_id = $1',
+    getOwnChapterLike: 'SELECT like_id FROM likes_chapter WHERE user_id = $1 AND chapter_id = $2;',
 
 
     addMangaLike: 'INSERT INTO likes_manga (user_id, manga_id) VALUES ($1, $2);',
@@ -99,7 +99,7 @@ module.exports = {
 
     getMangaLikes: 'SELECT * FROM likes_manga WHERE manga_id = $1',
 
-    getOwnMangaLike: 'SELECT like_id FROM likes_manga WHERE user_id = $1',
+    getOwnMangaLike: 'SELECT like_id FROM likes_manga WHERE user_id = $1 AND manga_id = $2;',
 
 
     subscribe: 'INSERT INTO subscribe (user_id, manga_id) VALUES ($1, $2);',
@@ -110,5 +110,7 @@ module.exports = {
     //Messages
     noResults: 'No results were found',
     dbConError: 'Database Connection Error',
-    dbError: 'Database Error'
+    dbError: 'Database Error',
+    mangaLiked: 'Manga Already Liked',
+    chapterLiked: 'Chapter Already Liked'
 };
