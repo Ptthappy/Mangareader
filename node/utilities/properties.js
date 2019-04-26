@@ -115,10 +115,20 @@ module.exports = {
 
     checkSubscribe: 'SELECT * FROM subscribe WHERE manga_id = $1 AND user_id = $2',
 
+    getSuscribersEmail: 'SELECT u.user_email, m.manga_name, c.chapter_number FROM subscribe s ' +
+        'INNER JOIN users u ON s.user_id = u.user_id ' +
+        'INNER JOIN manga m ON s.manga_id = m.manga_id ' +
+        'INNER JOIN chapters c ON s.manga_id = c.manga_id ' +
+        'WHERE s.manga_id = 1 ORDER BY c.chapter_number DESC LIMIT 1',
+
     //Messages
     noResults: 'No results were found',
     dbConError: 'Database Connection Error',
     dbError: 'Database Error',
     mangaLiked: 'Manga Already Liked',
-    chapterLiked: 'Chapter Already Liked'
+    chapterLiked: 'Chapter Already Liked',
+
+    //Email Server Data
+    emailUser: 'aax_00ap@hotmail.com',
+    emailPassword: 'eresbella123'
 };

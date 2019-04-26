@@ -1,5 +1,14 @@
 const db = require('../utilities/db');
 const properties = require('../utilities/properties');
+const transporter = require('nodemailer').createTransport({
+    host: 'localhost',
+    port: 465,
+    secure: false,
+    auth: {
+        user: properties.emailUser,
+        pass: properties.emailPassword
+    }
+});
 
 module.exports.addChapter = (mangaId, chapter) => {
     return new Promise((res, rej) => {
@@ -15,12 +24,41 @@ module.exports.addChapter = (mangaId, chapter) => {
                     location: result.chapter_location,
                     pages: result.chapter_num_pages
                 }
-                res(beautifiedChapter)
+                this.notifySuscribed(mangaId);
+                res(beautifiedChapter);
                 obj.done()
             }).catch(err => { rej("Query Error." ); console.log(err) })
         }).catch(err => { rej("Database Error."); console.log(err) })
     })
 }
+
+module.exports.notifySuscribed = mangaId => {
+    db.connect().then(obj => {
+        obj.many(properties.getSuscribersEmail, [mangaId]).then(data => {
+            data.forEach(data => {
+                console.log(data);
+                let message = {
+                    from: properties.emailUser,
+                    to: data.user_email,
+                    subject: 'Se ha subido un nuevo capítulo de un manga que estás siguiendo',
+                    text: 'Se acaba de subir el capítulo #' + data.chapter_number + ' del manga' +
+                        data.manga_name,
+                    html: '<p>' + this.text +'</p>'
+                };
+
+                transporter.sendMail(message, (err, info, res) => {
+                    console.log(info);
+                    console.log(err);
+                    console.log(res);
+                });
+            });
+        }).catch(err => {
+            rej(properties.noResults);
+        })
+    }).catch(err => {
+        console.log(err);
+    })
+};
 
 module.exports.checkChapter = (mangaId, chapterNumber) => {
     return new Promise((res, rej) => {
