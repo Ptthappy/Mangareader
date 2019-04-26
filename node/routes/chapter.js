@@ -2,10 +2,17 @@ const express = require('express');
 const auth = require('../middlewares/isAuth');
 const multer = require('multer')
 const diskStorage = require('../utilities/diskStorage')
-const upload = multer({ storage: diskStorage.storage })
+const fileFilter = (req, file, cb) => {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+        req.res.status(409).send("File(s) must be photo(s).")
+    }
+    cb(null, true)
+}
+const upload = multer({ storage: diskStorage.storage, fileFilter: fileFilter })
 const mangaFilter = require('../middlewares/mangaFilter')
 const chapterHelper = require('../helpers/chapter')
 const fs = require('fs')
+const rimraf = require("rimraf")
 
 let router = express.Router();
 
@@ -20,7 +27,7 @@ router.post('/:mangaId/addChapter', auth.isAuth, mangaFilter.checkOwnership, man
     chapterHelper.addChapter(req.params.mangaId, req.body).then(data => {
         res.status(200).send(data)
     }, err => {
-        fs.rmdirSync('assets/manga' + req.params.mangaId + "/chapter" + req.query.number + "/")
+        rimraf('assets/manga' + req.params.mangaId + "/chapter" + req.query.number + "/", () => {})
         res.status(500).send(err)
     })
 })
@@ -48,6 +55,7 @@ router.delete('/:mangaId/deleteChapter', auth.isAuth, mangaFilter.checkOwnership
     const mangaId = req.params.mangaId
     const chapterNumber = req.query.number
     chapterHelper.deleteChapter(mangaId, chapterNumber).then(data => {
+        rimraf('assets/manga' + mangaId + "/chapter" + chapterNumber + "/", () => {})
         res.status(200).send(data)
     }, err => {
         res.status(500).send(err)

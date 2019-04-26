@@ -2,6 +2,8 @@ const express = require('express');
 const auth = require('../middlewares/isAuth');
 const mangaHelper = require('../helpers/manga');
 const mangaFilter = require('../middlewares/mangaFilter')
+const rimraf = require('rimraf')
+const fs = require('fs')
 let router = express.Router();
 
 router.use('/', require('./chapter'));
@@ -34,6 +36,7 @@ router.delete('/delete', auth.isAuth, mangaFilter.checkOwnership,  (req, res) =>
     const userId = req.user.id
     mangaHelper.deleteManga(mangaId, userId).then(rowsAffected => {
         if(rowsAffected === 1) {
+            if(fs.existsSync("assets/manga" + mangaId)) rimraf("assets/manga" + mangaId, () => {})
             res.status(200).send("Manga deleted successfully.")
         }
         else {
