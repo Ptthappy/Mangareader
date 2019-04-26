@@ -134,6 +134,6 @@ module.exports = {
     serverError: 'Internal Server Error',
 
     //Email Server Data
-    emailUser: 'aax_00ap@hotmail.com',
-    emailPassword: 'eresbella123'
+    emailUser: 'mangapanga.subscribe@hotmail.com',
+    emailPassword: '7X0eBqK4nqJX'
 };
