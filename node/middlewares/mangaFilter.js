@@ -53,7 +53,7 @@ module.exports.checkMangaStatus = (req, res, next) => {
     mangaHelper.getMangaStatus(req.params.mangaId).then(status => {
         if(!status) { next() }
         else { 
-            res.status(409).send("Manga is set as ended. Modify it's status to allow changes.")
+            res.status(409).send("Manga is set as ended.")
         } 
     })
 }

@@ -125,6 +125,9 @@ module.exports = {
         'INNER JOIN chapters c ON s.manga_id = c.manga_id ' +
         'WHERE s.manga_id = 1 ORDER BY c.chapter_number DESC LIMIT 1',
 
+    getChapterSingleComment: 'SELECT user_id FROM comments_chapter WHERE comment_id = $1',
+    getMangaSingleComment: 'SELECT user_id FROM comments_manga WHERE comment_id = $1',
+
     //Messages
     noResults: 'No results were found',
     dbConError: 'Database Connection Error',

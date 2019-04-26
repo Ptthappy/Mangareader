@@ -1,10 +1,11 @@
 const express = require('express');
 const auth = require('../middlewares/isAuth');
 const likes = require('../helpers/likes');
+const mangaFilter = require('../middlewares/mangaFilter')
 let router = express.Router();
 
 //Get manga likes
-router.get('/:mangaId/likes', (req, res) => {
+router.get('/:mangaId/likes', mangaFilter.checkId, (req, res) => {
     likes.getMangaLikes(req.params.mangaId).then(data => {
         res.status(200).send({
             message: 'Likes Returned',
@@ -14,7 +15,7 @@ router.get('/:mangaId/likes', (req, res) => {
 });
 
 //Get chapter likes
-router.get('/:mangaId/chapter/:chapterId/likes', (req, res) => {
+router.get('/:mangaId/chapter/:chapterId/likes', auth.isAuth, mangaFilter.checkChapterToGet, (req, res) => {
     likes.getChapterLikes(req.params.chapterId).then(data => {
         res.status(200).send({
             message: 'Likes Returned',
@@ -28,7 +29,7 @@ router.get('/:mangaId/chapter/:chapterId/likes', (req, res) => {
 });
 
 //Do manga like
-router.post('/:mangaId/likes', auth.isAuth, (req, res) => {
+router.post('/:mangaId/likes', auth.isAuth, mangaFilter.checkId, (req, res) => {
     likes.likeManga(req.user.id, req.params.mangaId).then(data => {
         res.status(200).send({
             message: 'Manga liked'
@@ -42,7 +43,7 @@ router.post('/:mangaId/likes', auth.isAuth, (req, res) => {
 });
 
 //Do chapter like
-router.post('/:mangaId/chapter/:chapterId/likes', auth.isAuth, (req, res) => {
+router.post('/:mangaId/chapter/:chapterId/likes', auth.isAuth, mangaFilter.checkId, (req, res) => {
     likes.likeChapter(req.user.id, req.params.chapterId).then(data => {
         res.status(200).send({
             message: 'Chapter liked'
@@ -55,7 +56,7 @@ router.post('/:mangaId/chapter/:chapterId/likes', auth.isAuth, (req, res) => {
 });
 
 //Delete manga like
-router.delete('/:mangaId/likes', auth.isAuth, (req, res) => {
+router.delete('/:mangaId/likes', auth.isAuth, mangaFilter.checkId, (req, res) => {
     likes.deleteLike(req.body.likeId, true).then(data => {
         res.status(200).send({
             message: 'Manga disliked'

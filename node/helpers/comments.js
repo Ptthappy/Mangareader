@@ -138,3 +138,25 @@ module.exports.deleteChapterComment = commentId => {
         });
     });
 };
+
+module.exports.getMangaSingleComment = (commentId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.oneOrNone(properties.getMangaSingleComment, [commentId]).then(result => {
+                if(result === null) { res(null) }
+                else { res(result.user_id) }
+            }).catch(err => rej("Query Error."))
+        }).catch(err => rej("Database Error."))
+    })
+}
+
+module.exports.getChapterSingleComment = (commentId) => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.oneOrNone(properties.getChapterSingleComment, [commentId]).then(result => {
+                if(result === null) { res(null) }
+                else { res(result.user_id) }
+            }).catch(err => rej("Query Error."))
+        }).catch(err => rej("Database Error."))
+    })
+}
