@@ -34,8 +34,8 @@ router.post('/register', auth.isLogged, (req, res) => {
     })
 });
 
-router.put('/modify/:modify', auth.isAuth, async (req, res) => {
-    let modify = req.params.modify
+router.put('/modify/:modify', auth.isAuth, auth.checkEmail, auth.checkUsername, (req, res) => {
+    let modify = req.params.modify;
     let user = req.user;
     if(modify === undefined) {
         user.name = req.body.name;

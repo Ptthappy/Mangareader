@@ -23,6 +23,10 @@ module.exports = {
 
     getUsers: 'SELECT user_id, user_username, user_name, user_email FROM users',
 
+    checkEmail: 'SELECT * FROM users WHERE user_email = $1;',
+
+    checkUsername: 'SELECT * FROM users WHERE user_username = $1;',
+
 
     addManga: 'INSERT INTO manga (user_id, manga_name, manga_synopsis) VALUES ($1, $2, $3) RETURNING *;',
 
@@ -127,6 +131,7 @@ module.exports = {
     dbError: 'Database Error',
     mangaLiked: 'Manga Already Liked',
     chapterLiked: 'Chapter Already Liked',
+    serverError: 'Internal Server Error',
 
     //Email Server Data
     emailUser: 'aax_00ap@hotmail.com',

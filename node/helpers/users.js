@@ -33,6 +33,44 @@ module.exports.getUserById = id => {
     });
 };
 
+module.exports.getEmail = email => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.oneOrNone(properties.checkEmail, [email]).then (data => {
+                if(data)
+                    res(true);
+                else
+                    res(false);
+            }).catch(err => {
+                console.log(err);
+                rej(properties.dbError);
+            })
+        }).catch(err => {
+            console.log(err);
+            rej(properties.dbConError);
+        });
+    });
+};
+
+module.exports.getUsername = username => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.oneOrNone(properties.checkUsername, [username]).then (data => {
+                if(data)
+                    res(true);
+                else
+                    res(false);
+            }).catch(err => {
+                console.log(err);
+                rej(properties.dbError);
+            })
+        }).catch(err => {
+            console.log(err);
+            rej(properties.dbConError);
+        });
+    });
+};
+
 module.exports.register = user => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
