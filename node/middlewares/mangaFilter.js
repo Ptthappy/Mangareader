@@ -8,10 +8,10 @@ module.exports.checkOwnership = (req, res, next) => {
             next()
         }
         else {
-            res.status(401).send('You are not the owner of the manga.')
+            res.status(401).send({ status: 401, message: 'You are not the owner of the manga.' })
         }
     }, err => {
-        res.status(404).send('Manga with id ' + mangaId + ' not found.')
+        res.status(404).send({ status: 404, message: 'Manga with id ' + mangaId + ' not found.' })
     })
 }
 
@@ -20,7 +20,7 @@ module.exports.checkChapterToUp = (req, res, next) => {
     const chapterNumber = req.query.number
     chapterHelper.checkChapter(mangaId, chapterNumber).then(exists => {
          if(exists) {
-            res.status(409).send("Chapter " + chapterNumber + " already exists.")
+            res.status(409).send({ status: 409, message: "Chapter " + chapterNumber + " already exists." })
         }
         else {
             next()
@@ -33,7 +33,7 @@ module.exports.checkChapterToGet = (req, res, next) => {
     const chapterNumber = typeof req.params.chapterId === 'undefined' ? req.query.number : req.params.chapterId  
     chapterHelper.checkChapter(mangaId, chapterNumber).then(exists => {
          if(!exists) {
-            res.status(409).send("Chapter " + chapterNumber + " doesn't exists in manga " + mangaId + ".")
+            res.status(409).send({ status: 409, message: "Chapter " + chapterNumber + " doesn't exists in manga " + mangaId + "." })
         }
         else {
             next()
@@ -45,7 +45,7 @@ module.exports.checkId = (req, res, next) => {
     mangaHelper.getManga(req.params.mangaId).then(data => {
         next()
     }, err => {
-         res.status(404).send('Manga with id ' + req.params.mangaId + ' not found.')
+         res.status(404).send({ status: 404, message: 'Manga with id ' + req.params.mangaId + ' not found.' })
     })
 }
 
@@ -53,7 +53,7 @@ module.exports.checkMangaStatus = (req, res, next) => {
     mangaHelper.getMangaStatus(req.params.mangaId).then(status => {
         if(!status) { next() }
         else { 
-            res.status(409).send("Manga is set as ended.")
+            res.status(409).send({ status: 409, message: "Manga is set as ended." })
         } 
     })
 }
@@ -66,7 +66,7 @@ module.exports.checkPage = (req, res, next) => {
         const pagesN = result.pages
         if(page >= 1 && page <= pagesN) { next() }
         else {
-            res.status(404).send("Page " + page + " doesn't exists in Chapter " + number)
+            res.status(404).send({ status: 404, message: "Page " + page + " doesn't exists in Chapter " + number })
         }
     })
 }
@@ -76,7 +76,7 @@ module.exports.checkSubscribe = (req, res, next) => {
     const userId = req.user.id
     mangaHelper.alreadySubscribed(mangaId, userId).then(subscribed => {
         if(subscribed) {
-            res.status(409).send("Already subscribed to the manga.")
+            res.status(409).send({ status: 409, message: "Already subscribed to the manga." })
         }
         else {
             next()
@@ -92,7 +92,7 @@ module.exports.checkUnsubscribe = (req, res, next) => {
             next()
         }
         else {
-            res.status(409).send("You are not subscribed to that manga.")
+            res.status(409).send({ status: 409, message: "You are not subscribed to that manga." })
         }
     })
 }

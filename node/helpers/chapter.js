@@ -1,12 +1,15 @@
 const db = require('../utilities/db');
 const properties = require('../utilities/properties');
 const transporter = require('nodemailer').createTransport({
-    host: 'localhost',
-    port: 465,
+    host: 'smtp.gmail.com',
+    port: 25,
     secure: false,
     auth: {
         user: properties.emailUser,
         pass: properties.emailPassword
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
@@ -24,7 +27,7 @@ module.exports.addChapter = (mangaId, chapter) => {
                     location: result.chapter_location,
                     pages: result.chapter_num_pages
                 }
-                this.notifySuscribed(mangaId);
+                // this.notifySuscribed(mangaId);
                 res(beautifiedChapter);
                 obj.done()
             }).catch(err => { rej("Query Error." ); console.log(err) })
@@ -32,7 +35,7 @@ module.exports.addChapter = (mangaId, chapter) => {
     })
 }
 
-module.exports.notifySuscribed = mangaId => {
+notifySuscribed = mangaId => {
     db.connect().then(obj => {
         obj.many(properties.getSuscribersEmail, [mangaId]).then(data => {
             data.forEach(data => {
@@ -43,7 +46,8 @@ module.exports.notifySuscribed = mangaId => {
                     subject: 'Se ha subido un nuevo capítulo de un manga que estás siguiendo',
                     text: 'Se acaba de subir el capítulo #' + data.chapter_number + ' del manga' +
                         data.manga_name,
-                    html: '<p>' + this.text +'</p>'
+                    html: '<p>' + 'Se acaba de subir el capítulo #' + data.chapter_number + ' del manga' +
+                        data.manga_name +'</p>'
                 };
 
                 transporter.sendMail(message, (err, info, res) => {
